@@ -45,7 +45,7 @@
                     </group>
                     <notebook>
                         <page string="Box">
-                            <field name="box_ids" >
+                            <field name="product_box_ids" >
                                 <tree>
                                     <field name="name" />
                                     <field name="case_no" />

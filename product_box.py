@@ -11,7 +11,7 @@ class product_box(orm.Model):
     _description = u"Box contenant des produits"
 
     _columns = {
-        'ename': fields.char(u"BOX NAME", help=u"Colonne BOX NAME du fichier Excel",
+        'name': fields.char(u"BOX NAME", help=u"Colonne BOX NAME du fichier Excel",
                              required=True),
         'case_no': fields.char(u"CASE. NO.", help=u"Colonne CASE. NO. du fichier Excel"),
         'material': fields.char(u"MATERIAL", help=u"Colonne MATERIAL du fichier Excel"),

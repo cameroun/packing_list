@@ -3,7 +3,7 @@ from openerp.osv import fields, orm
 
 
 class packing_list(orm.Model):
-    _inherit = 'packing.list'
+    _name = 'packing.list'
     _rec_name = 'pl_no'
 
     _columns = {
@@ -26,7 +26,7 @@ class packing_list(orm.Model):
         'pu_no': fields.char(u"PU No.",
                              help=u"Champ PU No. du fichier Excel"),
         'to': fields.char('TO', help=u"Destinataire de la liste de colisage"),
-        'box_ids': fields.one2many('product.box', 'box_id', u"Box",
-                                   help=u"Liste des box de la liste de colisage"),
+        'product_box_ids': fields.one2many('product.box', 'packing_list_id', u"Box",
+                                   	   help=u"Liste des box de la liste de colisage"),
 
     }

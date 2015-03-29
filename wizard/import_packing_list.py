@@ -2,7 +2,7 @@
 from openerp.osv import fields, osv
 
 
-class wizard_import_packing_list(osv.TransienModel):
+class wizard_import_packing_list(osv.TransientModel):
     """
     Ceci sera utiliser pour excéuter un script d'importation.
     En fonction de l'emplacement de stock spécifié et du fichier
