@@ -23,7 +23,9 @@ Gestion des listes de colisage
         'menu.xml',
         'views/packing_list_view.xml',
         'views/product_box_view.xml',
-	'wizard/import_packing_list_view.xml',
+        'views/product_view.xml',
+        'views/product_box_quantity_view.xml',
+        # 'wizard/import_packing_list_view.xml',
     ],
     'demo': [
     ],

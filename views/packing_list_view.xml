@@ -9,12 +9,13 @@
             <field name="arch" type="xml">
             <tree string="Listes de colisage">
                 <field name="project" />
-                <field name="societe" />
+                <field name="res_company_id" />
                 <field name="to" />
                 <field name="contrat"/>
                 <field name="pl_no"/>
                 <field name="date" />
                 <field name="invoice_num" />
+                <field name="location_id" />
             </tree>
             </field>
         </record>
@@ -30,13 +31,14 @@
                     <group>
                         <group> 
                             <field name="project" />
-                            <field name="societe" />
+                            <field name="location_id" />
                             <field name="date" />
                             <field name="invoice_num" />
                             <field name="lc_no" />
                         </group>
                         <group> 
                             <field name="contrat"/>
+                            <field name="res_company_id" />
                             <field name="to" />
                             <field name="pl_no"/>
                             <field name="po_no" />
@@ -44,7 +46,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Box">
+                        <page string="Liste des Box">
                             <field name="product_box_ids" >
                                 <tree>
                                     <field name="name" />
@@ -70,13 +72,24 @@
                 <field name="pl_no" select="True"/>
                 <field name="po_no" />
                 <field name="pu_no" />
-                <field name="societe" />
+                <field name="res_company_id" />
                 <field name="contrat" />
                 <field name="invoice_num" />
                 <field name="date" />
                 <field name="lc_no" />
                 <field name="project" />
                 <field name="to" />
+                <field name="location_id" />
+                <group expand="1" string="Grouper Par...">
+                    <filter string="Société" icon="terp-project" 
+                        domain="[]" context="{'group_by':'res_company_id'}"/>
+                    <filter string="Emplacement stock" icon="terp-project" 
+                        domain="[]" context="{'group_by':'location_id'}"/>
+                    <filter string="N° Contrat" icon="terp-project" 
+                        domain="[]" context="{'group_by':'contrat'}"/>
+                    <filter string="Projet" icon="terp-project" 
+                        domain="[]" context="{'group_by':'project'}"/>
+                </group>
             </search>
             </field>
         </record>

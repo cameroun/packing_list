@@ -12,7 +12,7 @@ class product_box(orm.Model):
 
     _columns = {
         'name': fields.char(u"BOX NAME", help=u"Colonne BOX NAME du fichier Excel",
-                             required=True),
+                            required=True),
         'case_no': fields.char(u"CASE. NO.", help=u"Colonne CASE. NO. du fichier Excel"),
         'material': fields.char(u"MATERIAL", help=u"Colonne MATERIAL du fichier Excel"),
         'gw': fields.char(u"GW (KG)", help=u"Colonne GW(KG) du fichier Excel"),
@@ -21,10 +21,7 @@ class product_box(orm.Model):
         'volume': fields.char(u"Volume", help=u"Colonne VOLUME du fichier Excel"),
         'note': fields.text(u"Note", help=u"Colonne NOTE du fichier Excel"),
         'packing_list_id': fields.many2one('packing.list', u"Liste de colisage", required=True),
-        'product_ids': fields.many2many('product.product',
-                                        'product_box_product_product_rel',
-                                        'product_id',
-                                        'product_box_id',
-                                        u"Articles",
-                                        help=u"Liste des produits du box"),
+        'product_box_qty_ids': fields.one2many('product.box.quantity', 'product_box_id',
+                                               u"Quantité produit/Box",
+                                               help=u"Quantité de produit par box"),
     }

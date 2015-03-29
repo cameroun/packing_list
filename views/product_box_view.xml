@@ -40,10 +40,11 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Articles" >
-                            <field name="product_ids" >
+                        <page string="Quantité de produit par Box" >
+                            <field name="product_box_qty_ids" >
                                 <tree>
-                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                    <field name="quantity"/>
                                 </tree>
                             </field>
                         </page>
@@ -69,6 +70,12 @@
                 <field name="size" />
                 <field name="volume" />
                 <field name="packing_list_id" />
+                <group expand="1" string="Grouper Par...">
+                    <filter string="Liste de colisage" icon="terp-project" 
+                            domain="[]" context="{'group_by':'packing_list_id'}"/>
+                    <filter string="Matériel" icon="terp-project" 
+                            domain="[]" context="{'group_by':'material'}"/>
+                </group>
             </search>
             </field>
         </record>
