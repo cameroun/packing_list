@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_product_box_tree" model="ir.ui.view">
+            <field name="name">product.box.tree</field>
+            <field name="model">product.box</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <tree string="Box">
+                <field name="name"/>
+                <field name="case_no" />
+                <field name="material" />
+                <field name="size" />
+                <field name="packing_list_id" />
+            </tree>
+            </field>
+        </record>
+        
+        <record id="view_product_box_form" model="ir.ui.view">
+            <field name="name">product.box.form</field>
+            <field name="model">product.box</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <form string="Box" version="7.0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" select="1"/>
+                            <field name="case_no" />
+                            <field name="material" />
+                            <field name="packing_list_id" />
+                        </group>
+                        <group>
+                            <field name="size" />
+                            <field name="gw" />
+                            <field name="nw" />
+                            <field name="volume" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Articles" >
+                            <field name="product_ids" >
+                                <tree>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Note" >
+                            <field name="note" />
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        
+        <record id="view_product_box_search" model="ir.ui.view">
+            <field name="name">product.box.search</field>
+            <field name="model">product.box</field>
+            <field name="type">search</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <search string="Box">
+                <field name="name" select="True"/>
+                <field name="case_no" />
+                <field name="material" />
+                <field name="size" />
+                <field name="volume" />
+                <field name="packing_list_id" />
+            </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="act_open_product_box_view">
+            <field name="name">Box</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.box</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_product_box_search"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_product_box_view_form">
+            <field name="act_window_id" ref="act_open_product_box_view"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_product_box_form"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_product_box_view_tree">
+            <field name="act_window_id" ref="act_open_product_box_view"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_product_box_tree"/>
+        </record>
+        
+        <menuitem id="menu_product_box"
+            parent="packing_list.product_box"
+            sequence="20"
+            action="act_open_product_box_view"/>
+    </data>
+</openerp>

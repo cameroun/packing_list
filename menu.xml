@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Top menu item -->
+        <menuitem name="HUAWEI"
+            id="packing_list.main_menu"
+            sequence="10"/>
+            <menuitem id="packing_list.liste_colisage"
+                      parent="packing_list.main_menu"
+                      name="Listes de colisage"
+                      sequence="5" />
+            <menuitem id="packing_list.product_box"
+                      parent="packing_list.main_menu"
+                      name="Box"
+                      sequence="10" />
+            <menuitem id="packing_list.product"
+                      parent="packing_list.main_menu"
+                      name="Articles"
+                      sequence="15" />
+    </data>
+</openerp>

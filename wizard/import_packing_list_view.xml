@@ -1,0 +1,43 @@
+<openerp>
+    <data>
+        <record id="view_wizard_packing_list_form" model="ir.ui.view">
+            <field name="name">wizard.packing.list.form</field>
+            <field name="model">wizard.packing.list</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <form string="Importer les listes de colisage" version="7.0">
+                <group>
+                    <group>
+                        <field name="location_id" select="1"/>
+                    </group>
+                    <group>
+                        <field name="filename" select="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Importer" class="oe_highlight" icon="gtk-ok" 
+                            type="object" name="import_packing_list"/>
+                    <button string="Annuler" special="cancel"/>
+                </footer>
+            </form>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="act_open_wizard_packing_view">
+            <field name="name">Importer les listes de colisage</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">wizard.packing.list</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+        
+        <menuitem id="menu_wizard_packing_list"
+            parent="packing_list.liste_colisage"
+            sequence="20"
+            action="act_open_wizard_packing_view"/>
+    </data>
+</openerp>

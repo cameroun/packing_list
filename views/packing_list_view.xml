@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_packing_list_tree" model="ir.ui.view">
+            <field name="name">packing.list.tree</field>
+            <field name="model">packing.list</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <tree string="Listes de colisage">
+                <field name="project" />
+                <field name="societe" />
+                <field name="to" />
+                <field name="contrat"/>
+                <field name="pl_no"/>
+                <field name="date" />
+                <field name="invoice_num" />
+            </tree>
+            </field>
+        </record>
+        
+        <record id="view_packing_list_form" model="ir.ui.view">
+            <field name="name">packing.list.form</field>
+            <field name="model">packing.list</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <form string="Listes de colisage" version="7.0">
+                <sheet>
+                    <group>
+                        <group> 
+                            <field name="project" />
+                            <field name="societe" />
+                            <field name="date" />
+                            <field name="invoice_num" />
+                            <field name="lc_no" />
+                        </group>
+                        <group> 
+                            <field name="contrat"/>
+                            <field name="to" />
+                            <field name="pl_no"/>
+                            <field name="po_no" />
+                            <field name="pu_no" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Box">
+                            <field name="box_ids" >
+                                <tree>
+                                    <field name="name" />
+                                    <field name="case_no" />
+                                    <field name="material" />
+                                    <field name="size" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        
+        <record id="view_packing_list_search" model="ir.ui.view">
+            <field name="name">packing.list.search</field>
+            <field name="model">packing.list</field>
+            <field name="type">search</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <search string="Listes de colisage">
+                <field name="pl_no" select="True"/>
+                <field name="po_no" />
+                <field name="pu_no" />
+                <field name="societe" />
+                <field name="contrat" />
+                <field name="invoice_num" />
+                <field name="date" />
+                <field name="lc_no" />
+                <field name="project" />
+                <field name="to" />
+            </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="act_open_packing_list_view">
+            <field name="name">Listes de colisage</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">packing.list</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_packing_list_search"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_packing_list_view_form">
+            <field name="act_window_id" ref="act_open_packing_list_view"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_packing_list_form"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_packing_list_view_tree">
+            <field name="act_window_id" ref="act_open_packing_list_view"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_packing_list_tree"/>
+        </record>
+        
+        <menuitem id="menu_packing_list"
+            parent="packing_list.liste_colisage"
+            sequence="20"
+            action="act_open_packing_list_view"/>
+    </data>
+</openerp>
