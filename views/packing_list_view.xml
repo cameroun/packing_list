@@ -29,7 +29,8 @@
             <field name="arch" type="xml">
             <form string="Listes de colisage" version="7.0">
                 <header>
-                    <button name="validate_packing_list" string="Valider les données importées" type="object" class="oe_highlight"/>
+                    <button name="action_assign" states="draft" string="Valider les données importées" type="object" class="oe_highlight" groups="base.group_user"/>
+
                     <button name="update_stock_qty" string="Mettre à jour le stock" type="object" class="oe_highlight"/>
 
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done" statusbar_colors="{&quot;draft&quot;:&quot;red&quot;,&quot;confirmed&quot;:&quot;blue&quot;}" readonly="1"/>

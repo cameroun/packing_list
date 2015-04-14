@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import time
 from openerp.osv import fields, orm, osv
+from openerp import netsvc
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 
 class packing_list(orm.Model):
@@ -32,6 +35,11 @@ class packing_list(orm.Model):
         'location_id': fields.many2one('stock.location', u"Emplacement",
                                        help=u""" C'est dans cet emplacement que les quantités
     de produits liées à cette liste de colisage seront mise à jour"""),
+        'date_done': fields.datetime(
+            u"Date du stansfert",
+            help=u"""Date d'achèvement: C'est la date à laquelle le stock de cette liste
+    de colisage a été mis à jour""",
+            states={'done': [('readonly', True)], 'cancel': [('readonly', True)]}),
         'state': fields.selection(
             [('draft', u"Brouillon"),
              ('confirmed', u"Validé"),
@@ -46,13 +54,93 @@ class packing_list(orm.Model):
                             mise à jour du stock.
                             C'est l'état finale et cette action est irréverssible.\n
         * Annulé: A été annulé, ne peut plus être validé\n"""),
+
     }
     _default = {
         'state': 'draft',
     }
 
-    def validate_packing_list(self, cr, uid, ids, context=None):
-        pass
+    def action_confirm(self, cr, uid, ids, context=None):
+        """ Valide les données importées.
+        @return: True
+        """
+        self.write(cr, uid, ids, {'state': 'confirmed'})
+        return True
+
+    def action_done(self, cr, uid, ids, context=None):
+        """Change l'etat de la liste de colisage à done.
+        Cette methode est appellée à la fin du workflow par l'activité "done"
+
+        @return: True
+        """
+        for packing in self.browse(cr, uid, ids, context=context):
+            values = {
+                'state': 'done'
+            }
+            if not packing.date_done:
+                values['date_done'] = time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            packing.write(values)
+        return True
+
+    def action_cancel(self, cr, uid, ids, context=None):
+        """ Change l'état d'une liste de colisage en Annulée.
+
+        @return: True
+        """
+        self.write(cr, uid, ids, {'state': 'cancel', })
+        return True
+
+    def action_assign(self, cr, uid, ids, *args):
+        """ Changes state of picking to available if all moves are confirmed.
+        @return: True
+        """
+        wf_service = netsvc.LocalService("workflow")
+        for pack in self.browse(cr, uid, ids):
+            if pack.state == 'draft':
+                wf_service.trg_validate(uid, 'packing.list', pack.id, 'button_confirm', cr)
+        return True
+
+    def test_finished(self, cr, uid, ids):
+        """ Test si une liste de colisage est à l'état done ou cancel ou pas
+        @return: True or False
+        """
+        for packing in self.browse(cr, uid, ids):
+            if packing.state not in ('done', 'cancel'):
+                if not packing.date_done:
+                    return False
+                else:
+                    packing.write({'state': 'done'})
+        return True
+
+    def allow_cancel(self, cr, uid, ids, context=None):
+        """ Vérifie si on peut annuler une liste de colisage
+        @return: True
+        """
+        for pack in self.browse(cr, uid, ids, context=context):
+            if pack.state not in ('done', 'cancel'):
+                return True
+            else:
+                osv.except_osv(
+                    u"Erreur",
+                    u"""Vous ne pouvez pas annuler un liste de colisage dont les stocks
+    ont déjà été mise à jour""")
+
+    def draft_validate(self, cr, uid, ids, context=None):
+        """ Valide les listes de colisages en brouillon.
+        @return: True
+        """
+        wf_service = netsvc.LocalService("workflow")
+        for pack_list in self.browse(cr, uid, ids, context=context):
+            wf_service.trg_write(uid, 'packing.list', pack_list.id, cr)
+        return {
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': ids[0],
+            'res_model': 'packing.list',
+            'type': 'ir.actions.act_window',
+            'context': context,
+            'nodestroy': True,
+        }
 
     def update_stock_qty(self, cr, uid, ids, context=None):
         """
