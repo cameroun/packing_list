@@ -9,13 +9,14 @@
             <field name="arch" type="xml">
             <tree string="Listes de colisage">
                 <field name="project" />
-                <field name="res_company_id" />
+                <field name="res_partner_id" />
                 <field name="to" />
                 <field name="contrat"/>
                 <field name="pl_no"/>
                 <field name="date" />
                 <field name="invoice_num" />
                 <field name="location_id" />
+                <field name="state" />
             </tree>
             </field>
         </record>
@@ -27,6 +28,12 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
             <form string="Listes de colisage" version="7.0">
+                <header>
+                    <button name="validate_packing_list" string="Valider les données importées" type="object" class="oe_highlight"/>
+                    <button name="update_stock_qty" string="Mettre à jour le stock" type="object" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done" statusbar_colors="{&quot;draft&quot;:&quot;red&quot;,&quot;confirmed&quot;:&quot;blue&quot;}" readonly="1"/>
+                </header>
                 <sheet>
                     <group>
                         <group> 
@@ -38,7 +45,7 @@
                         </group>
                         <group> 
                             <field name="contrat"/>
-                            <field name="res_company_id" />
+                            <field name="res_partner_id" />
                             <field name="to" />
                             <field name="pl_no"/>
                             <field name="po_no" />
@@ -58,6 +65,10 @@
                         </page>
                     </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+               </div>
             </form>
             </field>
         </record>
@@ -72,7 +83,7 @@
                 <field name="pl_no" select="True"/>
                 <field name="po_no" />
                 <field name="pu_no" />
-                <field name="res_company_id" />
+                <field name="res_partner_id" />
                 <field name="contrat" />
                 <field name="invoice_num" />
                 <field name="date" />
@@ -82,13 +93,15 @@
                 <field name="location_id" />
                 <group expand="1" string="Grouper Par...">
                     <filter string="Société" icon="terp-project" 
-                        domain="[]" context="{'group_by':'res_company_id'}"/>
+                        domain="[]" context="{'group_by':'res_partner_id'}"/>
                     <filter string="Emplacement stock" icon="terp-project" 
                         domain="[]" context="{'group_by':'location_id'}"/>
                     <filter string="N° Contrat" icon="terp-project" 
                         domain="[]" context="{'group_by':'contrat'}"/>
                     <filter string="Projet" icon="terp-project" 
                         domain="[]" context="{'group_by':'project'}"/>
+                    <filter string="Etat" icon="terp-project" 
+                        domain="[]" context="{'group_by':'state'}"/>
                 </group>
             </search>
             </field>
