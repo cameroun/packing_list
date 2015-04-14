@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-from openerp.osv import fields, orm
+from openerp.osv import fields, orm, osv
 
 
 class packing_list(orm.Model):
     _name = 'packing.list'
     _rec_name = 'pl_no'
+    _inherit = ['mail.thread']
 
     _columns = {
-        'res_company_id': fields.many2one('res.company', u"Société",
+        'res_partner_id': fields.many2one('res.partner', u"Société",
                                           help=u"Champ SOCIETE du fichier Excel"),
         'pl_no': fields.char(u"P/L No",
                              help=u"Champ P/L No. du fichier Excel"),
@@ -31,6 +32,37 @@ class packing_list(orm.Model):
         'location_id': fields.many2one('stock.location', u"Emplacement",
                                        help=u""" C'est dans cet emplacement que les quantités
     de produits liées à cette liste de colisage seront mise à jour"""),
-
-
+        'state': fields.selection(
+            [('draft', u"Brouillon"),
+             ('confirmed', u"Validé"),
+             ('done', u"Stock mis à jour"),
+             ('cancel', u"Annulé"), ],
+            'Etat', readonly=True, select=True, track_visibility='onchange',
+            help=u"""* Brouillon: Pas encore validé et ne sera pas traité avant d'être validé.\n
+        * Validé: Les données importées sont correctes, on passe donc la liste de colisage de. \n
+                  l'état Brouillon à l'état Validé afin de faire la mise à jour du stock\n
+        * Stock mis à jour: Les différentes quantités de produits contenues dans les \n
+                            box de la liste de colisage ont été utilisées pour faire la
+                            mise à jour du stock.
+                            C'est l'état finale et cette action est irréverssible.\n
+        * Annulé: A été annulé, ne peut plus être validé\n"""),
     }
+    _default = {
+        'state': 'draft',
+    }
+
+    def validate_packing_list(self, cr, uid, ids, context=None):
+        pass
+
+    def update_stock_qty(self, cr, uid, ids, context=None):
+        """
+        Cette fonction parcour la liste des box de la liste de colisage concernée et
+        import les quantités de produit dans l'emplacement de stock concerné
+        """
+        for pack_list in self.browse(cr, uid, ids):
+            if not pack_list.location_id:
+                raise osv.except_osv(
+                    u"Erreur lors de la mise à jour du stock",
+                    u"Vous devez spécifier un emplacement de stock "
+                    u"pour effectuer cette opération"
+                )
