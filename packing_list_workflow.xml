@@ -43,6 +43,7 @@
         <record id="trans_confirmed_done" model="workflow.transition">
             <field name="act_from" ref="act_confirmed"/>
             <field name="act_to" ref="act_done"/>
+            <field name="signal">button_done</field>
             <field name="condition">test_finished()</field>
         </record>
         <record id="trans_done_confirmed" model="workflow.transition">
@@ -53,8 +54,8 @@
         <record id="trans_confirmed_cancel" model="workflow.transition">
             <field name="act_from" ref="act_confirmed"/>
             <field name="act_to" ref="act_cancel"/>
-            <field name="condition">allow_cancel()</field>
             <field name="signal">button_cancel</field>
+            <field name="condition">allow_cancel()</field>
         </record>
         <record id="trans_draft_cancel" model="workflow.transition">
             <field name="act_from" ref="act_draft"/>
