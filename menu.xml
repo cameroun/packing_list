@@ -17,5 +17,9 @@
                       parent="packing_list.main_menu"
                       name="Articles"
                       sequence="15" />
+            <menuitem id="packing_list.delivery_note"
+                      parent="packing_list.main_menu"
+                      name="Delivery Note"
+                      sequence="20" />
     </data>
 </openerp>
