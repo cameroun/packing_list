@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+        <record id="view_delivery_note_line_tree" model="ir.ui.view">
+            <field name="name">delivery.note.line.tree</field>
+            <field name="model">delivery.note.line</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <tree string="Whole case handling">
+                <field name="cl_no"/>
+                <field name="packing_list_name"/>
+                <field name="box_no"/>
+                <field name="box_type"/>
+                <field name="box_status"/>
+                <field name="locator"/>
+                <field name="delivery_note_id" />
+            </tree>
+            </field>
+        </record>
+        
+        <record id="view_delivery_note_line_form" model="ir.ui.view">
+            <field name="name">delivery.note.line.form</field>
+            <field name="model">delivery.note.line</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <form string="Whole case handling" version="7.0">
+                <sheet>
+                    <group colspan="4">
+                        <group>
+                            <field name="cl_no" select="1"/>
+                            <field name="packing_list_name"/>
+                            <field name="box_no"/>
+                            <field name="locator"/>
+                            <field name="weight" sum="Total GW"/>
+                        </group>
+                        <group>
+                            <field name="delivery_note_id"/>
+                            <field name="actual_packing_list_name"/>
+                            <field name="box_type"/>
+                            <field name="box_status"/>
+                            <field name="volume" sum="Total Volume"/>
+                        </group>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Model/Model Desc/Version">
+                            <field name="model_desc"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        
+        <record id="view_delivery_note_line_search" model="ir.ui.view">
+            <field name="name">delivery.note.line.search</field>
+            <field name="model">delivery.note.line</field>
+            <field name="type">search</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <search string="Whole case handling">
+                <field name="cl_no" select="True"/>
+                <field name="box_no"/>
+                <field name="box_type"/>
+                <field name="box_status"/>
+                <field name="packing_list_name"/>
+                <group expand="1" string="Grouper Par...">
+                    <filter string="Box Type" icon="terp-project" 
+                        domain="[]" context="{'group_by':'box_type'}"/>
+                    <filter string="Delivery Note" icon="terp-project" 
+                        domain="[]" context="{'group_by':'delivery_note_id'}"/>
+                    <filter string="Box No." icon="terp-project" 
+                        domain="[]" context="{'group_by':'box_no'}"/>
+                    <filter string="Box Status" icon="terp-project" 
+                        domain="[]" context="{'group_by':'box_status'}"/>
+                </group>
+            </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="act_open_delivery_note_line_view">
+            <field name="name">Whole case handling</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">delivery.note.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_delivery_note_line_search"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_delivery_note_line_view_form">
+            <field name="act_window_id" ref="act_open_delivery_note_line_view"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_delivery_note_line_form"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_delivery_note_line_view_tree">
+            <field name="act_window_id" ref="act_open_delivery_note_line_view"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_delivery_note_line_tree"/>
+        </record>
+        
+        <menuitem id="menu_delivery_note_line"
+            parent="packing_list.delivery_note"
+            name="Delivery Note Line"
+            sequence="20"
+            action="act_open_delivery_note_line_view"/>
+    </data>
+</openerp>

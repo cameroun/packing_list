@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_delivery_note_tree" model="ir.ui.view">
+            <field name="name">delivery.note.tree</field>
+            <field name="model">delivery.note</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <tree string="Delivery Note">
+                    <field name="dn_no" />
+                    <field name="mr_no" />
+                    <field name="purpose"/>
+                    <field name="project_name" />
+                    <field name="project_code" />
+                    <field name="site"/>
+                    <field name="receiver" />
+                    <field name="customer" />
+                    <field name="from_warehouse" />
+                    <field name="print_date" />
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_delivery_note_form" model="ir.ui.view">
+            <field name="name">delivery.note.form</field>
+            <field name="model">delivery.note</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <form string="Delivery Note" version="7.0">
+                <header>
+                    <button name="draft_confirmed" states="draft" 
+                            string="Valider la delivery note" 
+                            type="object" class="oe_highlight" groups="base.group_user"/>
+                    <button name="update_stock_qty" string="Mettre à jour le stock" 
+                            states="confirmed" type="object" class="oe_highlight"/>
+                    <button name="action_cancel" states="confirmed,draft" 
+                            type="object" string="Annuler" groups="base.group_user"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done" statusbar_colors="{&quot;draft&quot;:&quot;red&quot;,&quot;confirmed&quot;:&quot;blue&quot;}" readonly="1"/>
+                </header>
+
+                <sheet>
+                    <group colspan="4">
+                        <group>
+                            <field name="dn_no" select="1"/>
+                            <field name="purpose"/>
+                            <field name="project_name" />
+                            <field name="contract_info" />
+                            <field name="special_unloading" />
+                            <field name="from_warehouse" />
+                        </group>
+                        <group>
+                            <field name="mr_no" select="1"/>
+                            <field name="site" />
+                            <field name="project_code" />
+                            <field name="product_category_id" />
+                            <field name="print_date" />
+                            <field name="warehouse_keeper" />
+                        </group>
+                        <group>
+                            <field name="receiver" />
+                            <field name="product_category_id" />
+                            <field name="request_arrived_date" />
+                        </group>
+                        <group>
+                            <field name="product_manager" />
+                            <field name="customer" />
+                            <field name="special_unloading" />
+                            <field name="request_shipment_date" />
+                        </group>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Whole case handling">
+                            <field name="delivery_note_line_ids">
+                                <tree string="Delivery Note Lines">
+                                    <field name="cl_no" />
+                                    <field name="box_no" />
+                                    <field name="packing_list_name" />
+                                    <field name="actual_packing_list_name" />
+                                    <field name="box_type" />
+                                    <field name="weight" sum="Total GW"/>
+                                    <field name="volume" sum="Total volume"/>
+                                    <field name="model_desc" />
+                                    <field name="box_status" />
+                                    <field name="locator" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Other Information">
+                            <group colspan="4">
+                                <group>
+                                    <field name="address"/>
+                                    <field name="description_dn" />
+                                </group>
+                                <group>
+                                    <field name="site_address" />
+                                    <field name="description_mr" />
+                                </group>
+                            </group>    
+                            <label for="install_env" string="Installation Environment"/>
+                            <field name="install_env" colspan="4" />
+                        </page>
+                        <page string="Signature">
+                            <group colspan="4">
+                                <group>
+                                    <field name="applicant" />
+                                    <field name="applicant_date" />
+                                    <field name="issued_by" />
+                                    <field name="issued_date" />
+                                    <field name="creator" />
+                                    <field name="creator_company" />
+                                    <field name="creator_date" />
+                                    <field name="signe_by" />
+                                </group>
+                                <group>
+                                    <field name="approver" />
+                                    <field name="approver_date" />
+                                    <field name="driver" />
+                                    <field name="driver_date" />
+                                    <field name="driver_company" />
+                                    <field name="carrier" />
+                                    <field name="carrier_contact" />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+               </div>
+            </form>
+            </field>
+        </record>
+        
+        <record id="view_delivery_note_search" model="ir.ui.view">
+            <field name="name">delivery.note.search</field>
+            <field name="model">delivery.note</field>
+            <field name="type">search</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <search string="Delivery Note">
+                <field name="purpose" select="True"/>
+                <field name="dn_no" select="True"/>
+                <field name="mr_no" select="True"/>
+                <field name="project_name" select="True"/>
+                <field name="project_code" select="True"/>
+                <field name="site" select="True"/>
+                <field name="receiver" select="True"/>
+                <field name="customer" select="True"/>
+                <field name="from_warehouse" select="True"/>
+                <field name="print_date" select="True"/>
+                <group expand="1" string="Grouper Par...">
+                    <filter string="Product category" icon="terp-project" 
+                            domain="[]" context="{'group_by':'product_category_id'}"/>
+                    <filter string="From warehouse" icon="terp-project" 
+                            domain="[]" context="{'group_by':'from_warehouse'}"/>
+                    <filter string="Warehouse Keeper" icon="terp-project" 
+                            domain="[]" context="{'group_by':'warehouse_keeper'}"/>
+                    <filter string="Receiver" icon="terp-project" 
+                            domain="[]" context="{'group_by':'receiver'}"/>
+                    <filter string="Logistics Specialist" icon="terp-project" 
+                            domain="[]" context="{'group_by':'logistics_specialist'}"/>
+                    <filter string="Product Manager" icon="terp-project" 
+                            domain="[]" context="{'group_by':'product_manager'}"/>
+                    <filter string="State" icon="terp-project" 
+                            domain="[]" context="{'group_by':'state'}"/>
+                    <filter string="Carrier" icon="terp-project" 
+                            domain="[]" context="{'group_by':'carrier'}"/>
+                    <filter string="Carrier Contact" icon="terp-project" 
+                            domain="[]" context="{'group_by':'carrier_contact'}"/>
+            
+                </group>
+            </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="act_open_delivery_note_view">
+            <field name="name">Delivery Note</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">delivery.note</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_delivery_note_search"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_delivery_note_view_form">
+            <field name="act_window_id" ref="act_open_delivery_note_view"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_delivery_note_form"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_delivery_note_view_tree">
+            <field name="act_window_id" ref="act_open_delivery_note_view"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_delivery_note_tree"/>
+        </record>
+        
+        <menuitem id="menu_delivery_note"
+            parent="packing_list.delivery_note"
+            sequence="20"
+            name="Delivery Note"
+            action="act_open_delivery_note_view"/>
+    </data>
+</openerp>
