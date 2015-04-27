@@ -60,14 +60,12 @@
                         </group>
                         <group>
                             <field name="receiver" />
-                            <field name="product_category_id" />
                             <field name="request_arrived_date" />
                         </group>
                         <group>
-                            <field name="product_manager" />
                             <field name="customer" />
-                            <field name="special_unloading" />
                             <field name="request_shipment_date" />
+                            <field name="product_manager" />
                         </group>
                     </group>
                     <notebook colspan="4">
@@ -75,15 +73,13 @@
                             <field name="delivery_note_line_ids">
                                 <tree string="Delivery Note Lines">
                                     <field name="cl_no" />
-                                    <field name="box_no" />
                                     <field name="packing_list_name" />
-                                    <field name="actual_packing_list_name" />
-                                    <field name="box_type" />
+                                    <field name="box_no" />
+                                    <field name="box_status" />
+                                    <field name="product_id" />
+                                    <field name="quantity" sum="Total Articles"/>
                                     <field name="weight" sum="Total GW"/>
                                     <field name="volume" sum="Total volume"/>
-                                    <field name="model_desc" />
-                                    <field name="box_status" />
-                                    <field name="locator" />
                                 </tree>
                             </field>
                         </page>

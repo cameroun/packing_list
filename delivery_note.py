@@ -84,6 +84,11 @@ class DeliveryNote(orm.Model):
         ),
     }
 
+    _defaults = {
+        'state': 'draft',
+    }
+
+
 # Fonctions liées aux workflows
 
     def action_confirm(self, cr, uid, ids, context=None):
@@ -202,4 +207,6 @@ class DeliveryNoteLine(orm.Model):
         'box_status': fields.char(u"Box Status"),
         'locator': fields.char(u"Locator/LSP Locator"),
         'delivery_note_id': fields.many2one('delivery.note', u"Delivery Note"),
+        'quantity': fields.integer(u"Quanttité"),
+        'product_id': fields.many2one('product.product', u"Article"),
     }
