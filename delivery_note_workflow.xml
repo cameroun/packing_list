@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="wkf_delivery_note" model="workflow">
+            <field name="name">delivery.note.basic</field>
+            <field name="osv">delivery.note</field>
+            <field name="on_create">True</field> 
+        </record>
+
+        <!--Activities-->
+        <record id="act_draft_dn" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_delivery_note"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+        </record>
+        <record id="act_confirmed_dn" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_delivery_note"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">action_confirm()</field>
+        </record>
+        <record id="act_done_dn" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_delivery_note"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">action_done()</field>
+            <field name="flow_stop">True</field>
+        </record>
+        <record id="act_cancel_dn" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_delivery_note"/>
+            <field name="name">cancel</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">action_cancel()</field>
+        </record>
+
+        <!--Transitions-->
+        <record id="trans_draft_confirmed_dn" model="workflow.transition">
+            <field name="act_from" ref="act_draft_dn"/>
+            <field name="act_to" ref="act_confirmed_dn"/>
+            <field name="signal">button_confirm</field>
+        </record>
+        <record id="trans_confirmed_done_dn" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed_dn"/>
+            <field name="act_to" ref="act_done_dn"/>
+            <field name="signal">button_done</field>
+            <field name="condition">test_finished()</field>
+        </record>
+        <record id="trans_done_confirmed_dn" model="workflow.transition">
+            <field name="act_from" ref="act_done_dn"/>
+            <field name="act_to" ref="act_confirmed_dn"/>
+            <field name="condition">not test_finished()</field>
+        </record>
+        <record id="trans_confirmed_cancel_dn" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed_dn"/>
+            <field name="act_to" ref="act_cancel_dn"/>
+            <field name="signal">button_cancel</field>
+            <field name="condition">allow_cancel()</field>
+        </record>
+        <record id="trans_draft_cancel_dn" model="workflow.transition">
+            <field name="act_from" ref="act_draft_dn"/>
+            <field name="act_to" ref="act_cancel_dn"/>
+            <field name="signal">button_cancel</field>
+        </record>
+
+    </data>
+</openerp>
