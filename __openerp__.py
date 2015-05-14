@@ -28,6 +28,7 @@ Gestion des listes de colisage
         'views/product_view.xml',
         'views/delivery_note_view.xml',
         'views/delivery_note_line_view.xml',
+        'views/delivery_product_qty.xml',
         'packing_list_workflow.xml',
         'delivery_note_workflow.xml',
     ],

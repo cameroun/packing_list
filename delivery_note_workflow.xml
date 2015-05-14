@@ -38,7 +38,7 @@
         <record id="trans_draft_confirmed_dn" model="workflow.transition">
             <field name="act_from" ref="act_draft_dn"/>
             <field name="act_to" ref="act_confirmed_dn"/>
-            <field name="signal">button_confirm</field>
+            <field name="signal">button_confirm_dn</field>
         </record>
         <record id="trans_confirmed_done_dn" model="workflow.transition">
             <field name="act_from" ref="act_confirmed_dn"/>

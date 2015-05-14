@@ -9,17 +9,13 @@
                       parent="packing_list.main_menu"
                       name="Listes de colisage"
                       sequence="5" />
-            <menuitem id="packing_list.product_box"
-                      parent="packing_list.main_menu"
-                      name="Box"
-                      sequence="10" />
-            <menuitem id="packing_list.product"
-                      parent="packing_list.main_menu"
-                      name="Articles"
-                      sequence="15" />
             <menuitem id="packing_list.delivery_note"
                       parent="packing_list.main_menu"
                       name="Delivery Note"
                       sequence="20" />
+            <menuitem id="packing_list.product"
+                      parent="packing_list.main_menu"
+                      name="Articles"
+                      sequence="30" />
     </data>
 </openerp>

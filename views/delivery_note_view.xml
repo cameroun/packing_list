@@ -43,12 +43,12 @@
                 <sheet>
                     <group colspan="4">
                         <group>
-                            <field name="dn_no" select="1"/>
+                            <field name="dn_no" select="1" attrs="{'readonly':[('state','=','done')]}"/>
                             <field name="purpose"/>
                             <field name="project_name" />
                             <field name="contract_info" />
                             <field name="special_unloading" />
-                            <field name="from_warehouse" />
+                            <field name="from_warehouse" attrs="{'readonly':[('state','=','done')]}"/>
                         </group>
                         <group>
                             <field name="mr_no" select="1"/>
@@ -56,7 +56,7 @@
                             <field name="project_code" />
                             <field name="product_category_id" />
                             <field name="print_date" />
-                            <field name="warehouse_keeper" />
+                            <field name="warehouse_keeper" attrs="{'readonly':[('state','=','done')]}"/>
                         </group>
                         <group>
                             <field name="receiver" />
@@ -70,14 +70,13 @@
                     </group>
                     <notebook colspan="4">
                         <page string="Whole case handling">
-                            <field name="delivery_note_line_ids">
+                            <field name="delivery_note_line_ids" 
+                                   attrs="{'readonly':[('state','=','done')]}">
                                 <tree string="Delivery Note Lines">
                                     <field name="cl_no" />
                                     <field name="packing_list_name" />
                                     <field name="box_no" />
                                     <field name="box_status" />
-                                    <field name="product_id" />
-                                    <field name="quantity" sum="Total Articles"/>
                                     <field name="weight" sum="Total GW"/>
                                     <field name="volume" sum="Total volume"/>
                                 </tree>

@@ -43,15 +43,15 @@
                 <sheet>
                     <group>
                         <group> 
-                            <field name="project" />
-                            <field name="location_id" />
+                            <field name="project" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="location_id" attrs="{'readonly':[('state','=','done')]}"/>
                             <field name="date" />
                             <field name="invoice_num" />
                             <field name="lc_no" />
                         </group>
                         <group> 
-                            <field name="contrat"/>
-                            <field name="res_partner_id" />
+                            <field name="contrat" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="res_partner_id" attrs="{'readonly':[('state','=','done')]}"/>
                             <field name="to" />
                             <field name="pl_no"/>
                             <field name="po_no" />
@@ -60,7 +60,7 @@
                     </group>
                     <notebook>
                         <page string="Liste des Box">
-                            <field name="product_box_ids" >
+                            <field name="product_box_ids" attrs="{'readonly':[('state','=','done')]}">
                                 <tree>
                                     <field name="name" />
                                     <field name="case_no" />

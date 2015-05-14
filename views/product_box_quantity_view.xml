@@ -82,8 +82,8 @@
         </record>
         
         <menuitem id="menu_product_box_quantity"
-            parent="packing_list.product_box"
-            sequence="20"
+            parent="packing_list.liste_colisage"
+            sequence="40"
             action="act_open_product_box_quantity_view"/>
     </data>
 </openerp>

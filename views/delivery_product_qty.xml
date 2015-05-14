@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_delivery_product_qty_tree" model="ir.ui.view">
+            <field name="name">delivery.product.qty.tree</field>
+            <field name="model">delivery.product.qty</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <tree string="Delivery product quantity">
+                <field name="delivery_note_line_id" />
+                <field name="product_id" />
+                <field name="qty" />
+            </tree>
+            </field>
+        </record>
+        
+        <record id="view_delivery_product_qty_form" model="ir.ui.view">
+            <field name="name">delivery.product.qty.form</field>
+            <field name="model">delivery.product.qty</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <form string="Delivery product quantity" version="7.0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="product_id" required="1"/>
+                        </group>
+                        <group>
+                            <field name="qty" required="1"/>
+                            <field name="delivery_note_line_id" required="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+            </field>
+        </record>
+        
+        <record id="view_delivery_product_qty_search" model="ir.ui.view">
+            <field name="name">delivery.product.qty.search</field>
+            <field name="model">delivery.product.qty</field>
+            <field name="type">search</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <search string="Delivery product quantity">
+                    <field name="product_id" select="True"/>
+                    <group expand="1" string="Grouper Par...">
+                        <filter string="Articles" icon="terp-project" 
+                            domain="[]" context="{'group_by':'product_id'}"/>
+                        <filter string="Delivery Note line" icon="terp-project" 
+                            domain="[]" context="{'group_by':'delivery_note_line_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="act_open_delivery_product_qty_view">
+            <field name="name">Delivery product quantity</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">delivery.product.qty</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_delivery_product_qty_search"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_delivery_product_qty_view_form">
+            <field name="act_window_id" ref="act_open_delivery_product_qty_view"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_delivery_product_qty_form"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_delivery_product_qty_view_tree">
+            <field name="act_window_id" ref="act_open_delivery_product_qty_view"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_delivery_product_qty_tree"/>
+        </record>
+        
+        <menuitem id="menu_delivery_product_qty"
+            parent="packing_list.delivery_note"
+            sequence="30"
+            string="Delivery Product Quantity"
+            action="act_open_delivery_product_qty_view"/>
+    </data>
+</openerp>

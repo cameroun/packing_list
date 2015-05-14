@@ -3,6 +3,7 @@ import time
 
 from openerp.osv import fields, orm, osv
 from openerp import netsvc
+from openerp import tools
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 
@@ -19,6 +20,8 @@ class DeliveryNote(orm.Model):
         pass
 
     _columns = {
+        'dn_no': fields.char(u"DN No.", track_visibility='onchange', required=True),
+        'mr_no': fields.char(u"MR No.", track_visibility='onchange'),
         'purpose': fields.char(u"Purpose of delivery"),
         'address': fields.text(u"Delivery address"),
         'site': fields.char(u"Site"),
@@ -40,8 +43,6 @@ class DeliveryNote(orm.Model):
         'logistics_specialist': fields.many2one('res.partner', u"Logistics Specialist"),
         'customer': fields.many2one('res.partner', u"Customer"),
         'product_manager': fields.many2one('res.partner', u"Product Manager"),
-        'dn_no': fields.char(u"DN No.", track_visibility='onchange'),
-        'mr_no': fields.char(u"MR No.", track_visibility='onchange'),
         'state': fields.selection(
             [('draft', u"Brouillon"),
              ('confirmed', u"Validé"),
@@ -55,6 +56,11 @@ class DeliveryNote(orm.Model):
         box de la liste de colisage ont été utilisées pour faire la  mise à jour du stock.
         C'est l'état finale et cette action est irréverssible.\n
      * Annulé: A été annulé, ne peut plus être validé\n"""),
+        'date_done': fields.datetime(
+            u"Date du stansfert",
+            help=u"""Date d'achèvement: C'est la date à laquelle le stock de des produits contenus
+    dans la delivery note a été mis à jour""",
+            states={'done': [('readonly', True)], 'cancel': [('readonly', True)]}),
         # section Partial case handling
         'delivery_note_line_ids': fields.one2many(
             'delivery.note.line',
@@ -88,11 +94,10 @@ class DeliveryNote(orm.Model):
         'state': 'draft',
     }
 
-
-# Fonctions liées aux workflows
+    # Fonctions liées aux workflows
 
     def action_confirm(self, cr, uid, ids, context=None):
-        """ Valide les données importées.
+        """ Valide les données crées/importées.
         @return: True
         """
         if isinstance(ids, (int, long)):
@@ -102,24 +107,24 @@ class DeliveryNote(orm.Model):
         return True
 
     def action_done(self, cr, uid, ids, context=None):
-        """Change l'etat de la liste de colisage à done.
+        """Change l'etat de la delivery note à done.
         Cette methode est appellée à la fin du workflow par l'activité "done"
 
         @return: True
         """
         if isinstance(ids, (int, long)):
             ids = [ids]
-        for packing in self.browse(cr, uid, ids, context=context):
+        for delivery in self.browse(cr, uid, ids, context=context):
             values = {
                 'state': 'done'
             }
-            if not packing.date_done:
+            if not delivery.date_done:
                 values['date_done'] = time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
-            packing.write(values)
+            delivery.write(values)
         return True
 
     def action_cancel(self, cr, uid, ids, context=None):
-        """ Change l'état d'une liste de colisage en Annulée.
+        """ Change l'état de la delivery note en Annulée.
 
         @return: True
         """
@@ -129,84 +134,152 @@ class DeliveryNote(orm.Model):
         return True
 
     def draft_confirmed(self, cr, uid, ids, *args):
-        """ Passe l'état de la liste de colisage de brouillon à confirmé
+        """ Passe l'état de la delivery note de brouillon à confirmé
         @return: True
         """
         wf_service = netsvc.LocalService("workflow")
-        for pack in self.browse(cr, uid, ids):
-            if pack.state == 'draft':
-                res = wf_service.trg_validate(uid, 'packing.list', pack.id, 'button_confirm', cr)
+        for deliv in self.browse(cr, uid, ids):
+            if deliv.state == 'draft':
+                res = wf_service.trg_validate(
+                    uid, 'delivery.note', deliv.id, 'button_confirm_dn', cr
+                )
         return res
 
     def confirmed_done(self, cr, uid, ids, *args):
-        """ Passe l'état de la liste de colisage de confirmé à done
+        """ Passe l'état de la delivery note de confirmé à done
         @return: True
         """
         wf_service = netsvc.LocalService("workflow")
-        for pack in self.browse(cr, uid, ids):
-            if pack.state == 'confirmed':
-                res = wf_service.trg_validate(uid, 'packing.list', pack.id, 'button_done', cr)
+        for deliv in self.browse(cr, uid, ids):
+            if deliv.state == 'confirmed':
+                res = wf_service.trg_validate(uid, 'delivery.note', deliv.id, 'button_done', cr)
         return res
 
     def test_finished(self, cr, uid, ids):
-        """ Test si une liste de colisage est à l'état done ou cancel ou pas
+        """ Test si une delivery note est à l'état done ou cancel ou pas
         @return: True or False
         """
-        for packing in self.browse(cr, uid, ids):
-            if packing.state in ('done', 'cancel'):
+        for deliv in self.browse(cr, uid, ids):
+            if deliv.state in ('done', 'cancel'):
                 return False
             else:
-                if not packing.date_done:
+                if not deliv.date_done:
                     return False
                 else:
-                    packing.write({'state': 'done'})
+                    deliv.write({'state': 'done'})
         return True
 
     def allow_cancel(self, cr, uid, ids, context=None):
-        """ Vérifie si on peut annuler une liste de colisage
+        """ Vérifie si on peut annuler une delivery note
         @return: True
         """
-        for pack in self.browse(cr, uid, ids, context=context):
-            if pack.state not in ('done', 'cancel'):
+        for deliv in self.browse(cr, uid, ids, context=context):
+            if deliv.state not in ('done', 'cancel'):
                 return True
             else:
                 osv.except_osv(
                     u"Erreur",
-                    u"""Vous ne pouvez pas annuler une liste de colisage dont les stocks
+                    u"""Vous ne pouvez pas annuler une delivery note dont les stocks
     ont déjà été mise à jour""")
 
     # Fin des fonctions liées au wkf
 
-
-class DeliveryNoteLine(orm.Model):
-    _name = 'delivery.note.line'
-
-    def _get_name(self, cr, uid, ids, fields_name, arg, context):
+    def _check_packing_list_location(self, cr, uid, packing_list_id):
         """
-        Le nom des deliveru_note_line est une concaténation entre le nom de la
-        liste de colisage et le numéro du box. Ceci sera utilisé pour l'affichage dans l'interface
+        Verifie si un emplacement de stock est défini sur la liste de colisage
         """
-        result = dict()
-        for note_line in self.browse(cr, uid, ids, context):
-            packing_list_name = note_line.packing_list_name or ""
-            box_no = note_line.box_no or ""
-            name = packing_list_name + "-" + box_no
-            result[note_line.id] = name
-        return result
+        pass
 
-    _columns = {
-        'name': fields.function(_get_name, type='char', string='Name', readonly=True),
-        'cl_no': fields.char(u"C/L No."),
-        'packing_list_name': fields.char(u"Package Name"),
-        'actual_packing_list_name': fields.char(u"Actual package name"),
-        'box_no': fields.char(u"Box No."),
-        'box_type': fields.char(u"Box Type"),
-        'weight': fields.float(u"Weight (KG)"),
-        'volume': fields.float(u"Volume (CBM)"),
-        'model_desc': fields.text(u"Model/Model Desc/Version"),
-        'box_status': fields.char(u"Box Status"),
-        'locator': fields.char(u"Locator/LSP Locator"),
-        'delivery_note_id': fields.many2one('delivery.note', u"Delivery Note"),
-        'quantity': fields.integer(u"Quanttité"),
-        'product_id': fields.many2one('product.product', u"Article"),
-    }
+    def _get_box_id(self, cr, uid, box_field, field_value):
+        """
+            Retourne l'id d'un box en recherchant une valeur sur un champ donner
+        """
+        box_mdl = self.pool.get('product.box')
+        if not (box_field or field_value):
+            return False
+        return box_mdl.search(cr, uid, [(box_field, '=', field_value)])
+
+    def get_all_delevery_product_qty_ids(self, cr, uid, delivery_note_line_ids, context=None):
+        """
+        Retourne la liste des ids et des quantitées des produits disponibles
+        dans un delivery note, donc dans tous les box
+        Cette fonction nous retourne une liste de browse du modele delivery.product.qty
+
+        @param delivery_note_line_ids: browse des box de la liste de la delivery.note.line
+        @rtype: list
+        """
+        delevery_product_qty_ids = []
+        for line in delivery_note_line_ids:
+            delevery_product_qty_ids.extend(line.delivery_product_qty_ids)
+        return delevery_product_qty_ids
+
+    def change_product_qty(self, cr, uid, product_ids_qty, context=None):
+        """ Changes the Product Quantity by making a Physical Inventory.
+        @param self: The object pointer.
+        @param cr: A database cursor
+        @param uid: ID of the user currently logged in
+        @param product_ids_qty: dict content all product_id and new quantity
+        @param context: A standard dictionary
+        @return:
+        """
+        if context is None:
+            context = {}
+
+        inventry_obj = self.pool.get('stock.inventory')
+        inventry_line_obj = self.pool.get('stock.inventory.line')
+        prod_obj_pool = self.pool.get('product.product')
+
+        for product_id, product_qty in product_ids_qty.iteritems():
+            res_original = prod_obj_pool.browse(cr, uid, product_id, context=context)
+            if product_qty < 0:
+                raise osv.except_osv(u"Erreur!", u"La quantité de doit pas être négative")
+            inventory_id = inventry_obj.create(
+                cr,
+                uid,
+                {'name': ('%s') % tools.ustr(res_original.name)},
+                context=context
+            )
+            line_data = {
+                'inventory_id': inventory_id,
+                'product_qty': product_qty,
+                'location_id': context['location'],
+                'product_id': product_id,
+                'product_uom': res_original.uom_id.id,
+            }
+            inventry_line_obj.create(cr, uid, line_data, context=context)
+
+            inventry_obj.action_confirm(cr, uid, [inventory_id], context=context)
+            inventry_obj.action_done(cr, uid, [inventory_id], context=context)
+
+        # On change passe l'état de la delivery note à done si tout se passe bien
+        delivery_ids = [context['delivery_note_id']] if 'delivery_note_id' in context else []
+        self.action_done(cr, uid, delivery_ids, context)
+        return {}
+
+    def update_stock_qty(self, cr, uid, ids, context=None):
+        """
+        Cette fonction parcour la liste les ligne de la delivery note et
+        import les quantités de produit dans l'emplacement de stock
+        (champ from_warehouse)
+        """
+        new_product_ids_qty = {}
+        for deliv in self.browse(cr, uid, ids):
+            if not deliv.from_warehouse:
+                raise osv.except_osv(
+                    u"Erreur",
+                    u"Vous devez spécifier un emplacement de stock "
+                    u"pour effectuer cette opération \n"
+                    u"[Champ 'From warehouse']"
+                )
+            all_delivery_product_ids = self.get_all_delevery_product_qty_ids(
+                cr, uid, deliv.delivery_note_line_ids
+            )
+            # On recupère l'ancienne quantité de chaque produit
+            context['location'] = deliv.from_warehouse.id
+            context['delivery_note_id'] = deliv.id
+            # On crée les lignes de mouvement de stock
+            for delivery_product_qty in all_delivery_product_ids:
+                new_product_qty = delivery_product_qty.product_id.qty_available - \
+                    delivery_product_qty.qty
+                new_product_ids_qty[delivery_product_qty.product_id.id] = new_product_qty
+            self.change_product_qty(cr, uid, new_product_ids_qty, context)

@@ -155,7 +155,7 @@ class packing_list(orm.Model):
         """
         Retourne la liste des ids et des quantitées des produits disponibles
         dans une liste de colisage, donc dans tous les box
-        Cette fonctionne nous retourne une liste de browse du modele product.box.quantity
+        Cette fonction nous retourne une liste de browse du modele product.box.quantity
 
         @param box_ids: browse des box de la liste de colisage (packing.list)
         @rtype: list
@@ -197,7 +197,6 @@ class packing_list(orm.Model):
                 'location_id': context['location'],
                 'product_id': product_id,
                 'product_uom': res_original.uom_id.id,
-                # 'prod_lot_id': data.prodlot_id.id
             }
             inventry_line_obj.create(cr, uid, line_data, context=context)
 

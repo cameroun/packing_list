@@ -11,13 +11,11 @@
             <tree string="Whole case handling">
                 <field name="cl_no"/>
                 <field name="packing_list_name"/>
-                <field name="product_id" />
                 <field name="box_no"/>
                 <field name="box_type"/>
                 <field name="box_status"/>
                 <field name="locator"/>
                 <field name="delivery_note_id" />
-                <field name="quantity" sum="Total Article"/>
                 <field name="weight" sum="Total GW"/>
                 <field name="volume" sum="Total Volume"/>
             </tree>
@@ -34,23 +32,29 @@
                 <sheet>
                     <group colspan="4">
                         <group>
-                            <field name="cl_no" select="1"/>
-                            <field name="packing_list_name"/>
-                            <field name="box_no"/>
+                            <field name="delivery_note_id" select="1" required="1"/>
+                            <field name="packing_list_name" />
+                            <field name="actual_packing_list_name"/>
                             <field name="locator"/>
                             <field name="weight"/>
-                            <field name="product_id" />
                         </group>
                         <group>
-                            <field name="delivery_note_id"/>
-                            <field name="actual_packing_list_name"/>
+                            <field name="box_no" required="1"/>
+                            <field name="cl_no" />
                             <field name="box_type"/>
                             <field name="box_status"/>
                             <field name="volume"/>
-                            <field name="quantity" />
                         </group>
                     </group>
                     <notebook colspan="4">
+                        <page string="Articles">
+                            <field name="delivery_product_qty_ids" >
+                                <tree editable="top">
+                                    <field name="product_id"/>
+                                    <field name="qty" />
+                                </tree>
+                            </field>
+                        </page>
                         <page string="Model/Model Desc/Version">
                             <field name="model_desc"/>
                         </page>
@@ -72,7 +76,6 @@
                 <field name="box_type"/>
                 <field name="box_status"/>
                 <field name="packing_list_name"/>
-                <field name="product_id" />
                 <group expand="1" string="Grouper Par...">
                     <filter string="Box Type" icon="terp-project" 
                         domain="[]" context="{'group_by':'box_type'}"/>
@@ -82,8 +85,6 @@
                         domain="[]" context="{'group_by':'box_no'}"/>
                     <filter string="Box Status" icon="terp-project" 
                         domain="[]" context="{'group_by':'box_status'}"/>
-                    <filter string="Articles" icon="terp-project" 
-                        domain="[]" context="{'group_by':'product_id'}"/>
                 </group>
             </search>
             </field>
