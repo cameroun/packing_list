@@ -6,7 +6,7 @@
             <field name="model">product.product</field>
             <field name="type">form</field>
             <field name="priority" eval="8"/>
-            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='list_price']" position="after">
                     <field name="part_number" string="Part Number"/>
